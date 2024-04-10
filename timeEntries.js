@@ -27,8 +27,6 @@ async function addTimeEntries(timeLogs) {
         }),
       });
 
-      console.log(await response.text()); // TODO remove
-      console.log(response.status);
       if (response.status !== 200) {
         throw new Error(await response.text())
       }

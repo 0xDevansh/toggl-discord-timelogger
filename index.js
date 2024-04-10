@@ -34,7 +34,6 @@ client.on(Events.MessageCreate, async message => {
         if (description.length) {
             description = description.charAt(0).toUpperCase() + description.slice(1)
         }
-        console.log(description);
         let project = undefined
         if (Object.keys(config.projectCodes).includes(match.groups.type.toLowerCase())) {
             project = config.projectCodes[match.groups.type.toLowerCase()]
