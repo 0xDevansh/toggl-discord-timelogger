@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.14.1",
-    "dotenv": "^16.4.5",
     "node-fetch-cjs": "^3.3.2"
   }
 }
