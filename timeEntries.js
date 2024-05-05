@@ -1,14 +1,14 @@
 const fetch = require('node-fetch-cjs').default;
 const config = require("./config.json")
 
-async function addTimeEntries(timeLogs) {
+async function addTimeEntries(timeLogs, date) {
   try {
     for (const log of timeLogs) {
       const { startHour, startMinute, endHour, endMinute, project, description } = log;
       console.log(`Adding entry: ${startHour}:${startMinute} - ${endHour}:${endMinute}`);
       
-      const startTime = getDate(startHour, startMinute)
-      const endTime = getDate(endHour, endMinute)
+      const startTime = getDate(startHour, startMinute, date)
+      const endTime = getDate(endHour, endMinute, date)
       
       const response = await fetch(`https://api.track.toggl.com/api/v9/workspaces/${config.workspaceId}/time_entries`, {
         method: 'POST',
@@ -30,6 +30,7 @@ async function addTimeEntries(timeLogs) {
       if (response.status !== 200) {
         throw new Error(await response.text())
       }
+      console.log(await response.text());
     }
     return null
   } catch (error) {
@@ -38,10 +39,11 @@ async function addTimeEntries(timeLogs) {
   }
 }
 
-function getDate(hour, minute) {
-  const date = new Date();
-  date.setHours(hour, minute, 0, 0)
-  return new Date(date.getTime() - config.timeZoneOffset * 60 * 1000)
+function getDate(hour, minute, date) {
+  const dateTime = new Date(date);
+  dateTime.setHours(hour, minute, 0, 0)
+  console.log(dateTime);
+  return new Date(dateTime.getTime() - config.timeZoneOffset * 60 * 1000)
 }
 
 module.exports.addTimeEntries = addTimeEntries

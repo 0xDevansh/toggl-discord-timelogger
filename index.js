@@ -4,6 +4,7 @@ const config = require("./config.json")
 
 const logRegex = /(\d{1,2})\:(\d{1,2}) *\- *(\d{1,2})\:(\d{1,2}) *(\w+) *(.*)/gm
 const singleLogRegex = /(?<sHour>\d{1,2})\:(?<sMin>\d{1,2}) *\- *(?<eHour>\d{1,2})\:(?<eMin>\d{1,2}) *(?<type>\w+) *(?<description>.*)/
+const dateRegex = /(\d+) *[\-\/] *(\d+) *[\-\/] *(\d+)/
 
 
 const client = new Client({
@@ -24,8 +25,21 @@ client.on(Events.MessageCreate, async message => {
     if (!logRegex.test(message.content)) return
 
     const logs = []
+    let lines = message.content.split(/\n/)
+    let date = new Date()
 
-    message.content.split(/\n/).map(l => l.trim()).forEach(line => {
+    // first line is date
+    if (lines.length && dateRegex.test(lines[0].trim())) {
+        const dateStr = lines.shift()
+        const groups = dateStr.match(dateRegex)?.groups
+        if (groups?.length) {
+            date.setDate(parseInt(groups[0]))
+            date.setMonth(parseInt(groups[1]))
+            date.setFullYear(parseInt(groups[2]))
+        }
+    }
+
+    lines.map(l => l.trim()).forEach(line => {
         const match = line.match(singleLogRegex)
         if (!match?.groups) return
         
@@ -41,7 +55,7 @@ client.on(Events.MessageCreate, async message => {
         logs.push({ startHour: match.groups.sHour, startMinute: match.groups.sMin, endHour: match.groups.eHour, endMinute: match.groups.eMin, project, description },)
     })
     
-    const error = await addTimeEntries(logs)
+    const error = await addTimeEntries(logs, date)
     if (error) {
         message.reply(`Error: ${error}`)    
     } else {
