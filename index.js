@@ -31,11 +31,11 @@ client.on(Events.MessageCreate, async message => {
     // first line is date
     if (lines.length && dateRegex.test(lines[0].trim())) {
         const dateStr = lines.shift()
-        const groups = dateStr.match(dateRegex)?.groups
-        if (groups?.length) {
-            date.setDate(parseInt(groups[0]))
-            date.setMonth(parseInt(groups[1]))
-            date.setFullYear(parseInt(groups[2]))
+        const match = dateStr.match(dateRegex)
+        if (match?.length) {
+            date.setDate(parseInt(match[1]))
+            date.setMonth(parseInt(match[2] - 1))
+            date.setFullYear(parseInt(match[3]))
         }
     }
 

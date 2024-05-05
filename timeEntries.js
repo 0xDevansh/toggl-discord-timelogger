@@ -30,7 +30,6 @@ async function addTimeEntries(timeLogs, date) {
       if (response.status !== 200) {
         throw new Error(await response.text())
       }
-      console.log(await response.text());
     }
     return null
   } catch (error) {
@@ -42,7 +41,6 @@ async function addTimeEntries(timeLogs, date) {
 function getDate(hour, minute, date) {
   const dateTime = new Date(date);
   dateTime.setHours(hour, minute, 0, 0)
-  console.log(dateTime);
   return new Date(dateTime.getTime() - config.timeZoneOffset * 60 * 1000)
 }
 
